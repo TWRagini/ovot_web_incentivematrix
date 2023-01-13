@@ -1,0 +1,175 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Main.master.cs" Inherits="OVOTS_WebApp.Main" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title>AMSTRAD PROMAX  - Your Profit Maximizer</title>
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/Site.css" rel="stylesheet" />
+    <script src="Scripts/modernizr-2.8.3.js"></script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <style>
+        .pointerOnAnchor{
+           cursor:pointer;
+        }
+    </style>
+    <form id="form1" runat="server">
+        <asp:HiddenField runat="server" ID="HDUserRole"/>
+        <asp:HiddenField runat="server" ID="HDUserName"/>
+          <asp:HiddenField runat="server" ID="HDUserCode"/>
+         <asp:HiddenField runat="server" ID="HDUserLevel"/>
+        <div>
+              <div class="navbar navbar-inverse navbar-fixed-top navbar-dark" style="color: #E5E7E9; background-color: #0A0A2A ">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+               <h3>AMSTRAD PROMAX  - Your Profit Maximizer</h3>
+                <div id="clock"></div>
+            </div>
+            <div class="navbar-collapse collapse">
+               
+                <ul class="nav navbar-nav" style="color: #E5E7E9;float:right;margin-right:-100px">
+                    <li class="nav-item">
+                        <br />
+                        <span>Role: <label id="Role" runat="server"></label></span>&nbsp;&nbsp;
+                    </li>
+                    <li class="nav-item">
+                        <br />
+                        <span>Name: <label id="UserNametxt" runat="server"></label></span>
+                    </li>
+                     <li class="nav-item">
+                        <br />
+                        <span>&nbsp;&nbsp;<a style="color:#b6ff00;" onclick="OpenchangePass();" >Change Password</a> </span>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Landing.aspx">
+                            <button type="button" class="btn btn-success btn-sm">
+                                <span class="glyphicon glyphicon-home"></span> Home
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Default.aspx">
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-off"></span> Log-Out
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                       <br />
+                       
+                    </li>
+                   
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+              <div id="ChangepassModal" class="modal fade" data-keyboard="false" data-backdrop="static" role="dialog">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body" id="ModelContent">
+                                    <div class="" style="padding: 10px;">
+                                        <h4 style="text-align: center; margin-left: 0; font-family: 'Roboto'">Change Password</h4>
+                                        <div style="height: 100%">
+                                            <div class="form-group; col-sm-12">
+                                                <input type="hidden" id="HDCatalogueCode" value="0" />
+                                              
+                                                 <div class="col-sm-12">
+                                                    <label>Old Pasword</label>
+                                                    <input type="password"  class="form-control input-sm" id="txtOld" maxlength="50" placeholder="Old Password" />
+                                                </div>
+                                                 <div class="col-sm-12" style="margin-top:4%">
+                                                    <label>New Password</label>
+                                                    <input type="password"  class="form-control input-sm" id="txtNew" maxlength="50" placeholder="New Password" />
+                                                </div>
+                                            </div>
+                                            <br />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer" style="margin-top:25%">
+                                    <input type="button" value="Change" style="" class="btn btn-success" id="btnSavePass" />
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+            <div class="container body-content">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+                </div>
+        </div>
+    </form>
+  
+     <script src="Scripts/jquery-3.4.1.js"></script>
+    <script src="Scripts/jquery-3.4.1.min.js"></script>
+   <%-- <script src="Scripts/jquery-3.4.1.slim.js"></script>
+    <script src="Scripts/jquery-3.4.1.slim.min.js"></script>--%>
+    <link href="Scripts/ConfirmBox/jquery-confirm.css" rel="stylesheet" />
+<script src="Scripts/ConfirmBox/jquery-confirm.min.js"></script>
+    <link href="Scripts/ConfirmBox/Datepicker.css" rel="stylesheet" />
+<script src="Scripts/ConfirmBox/Dapicker_Jquery.js"></script>
+    <script src="Scripts/table2excel.js"></script>
+      <script src="Scripts/bootstrap.js"></script>
+
+  <script>
+      function OpenchangePass() {
+          $("#txtOld").val("");
+           $("#txtNew").val("");
+           $('#ChangepassModal').modal('show');
+      }
+
+       $("#btnSavePass").click(function () {
+        $body = $("body");
+        var Validate = true;
+      
+        var OldPass = $("#txtOld").val().trim();
+        var NewPass = $("#txtNew").val().trim();
+      
+        OldPass == "" ? $("#txtOld").addClass('error') : $("#txtOld").removeClass('error');
+        NewPass == "" ? $("#txtNew").addClass('error') : $("#txtNew").removeClass('error');
+       
+        if (OldPass == "" || NewPass == "") {
+            Validate = false;
+        }
+      
+        if (Validate) {
+            $body.addClass("loading");
+            $.ajax({
+                type: "POST",
+                url: "Landing.aspx/UpdatePassword",
+                data: JSON.stringify({ 'OldPass': OldPass,'NewPass':NewPass }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (data) {
+                  
+                    if (data.d != "") {
+                        $.alert(data.d)
+                        $('#ChangepassModal').modal('hide');
+
+                    }
+                },
+                complete: function () {
+                    $body.removeClass("loading");
+                }
+            });
+        }
+    });
+  </script>
+  
+</body>
+</html>

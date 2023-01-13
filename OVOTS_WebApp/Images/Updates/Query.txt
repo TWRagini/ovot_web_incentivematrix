@@ -1,0 +1,140 @@
+select  epps.proc_global_mm_iss_export2excel('1',		--vin_comp_cd , 
+					     '1',		--vin_div_cd , 
+					     '1',		--vin_role_cd , 
+					     'P0',		--vin_emp_cd , 
+					     '{"2"}',   	--vin_loc_cd , 
+					      null,		--vin_miv_type , 
+					     '4',  		--vin_fin_yr , 
+					     '2021-05-01',	--vin_from_dt date, 
+				             '2021-05-31',	--vin_to_dt date, 
+			 		     NULL,  		--vin_transaction_stage smallint, 
+					     null, 		--vin_created_by character varying, 
+					     null, 		--vin_app_by character varying, 
+					     'SANDEEP',		--vin_pc_name character varying, 
+					     '12345', 		--vin_session_id integer, 
+					     'B',		--vin_flex_1 character varying, 
+					     null,		--vin_flex_2 character varying, 
+					     null		--vin_flex_3 character varying
+					  ) ;                                                   
+                                            
+                                                    												   
+
+
+select comp_cd,
+       div_cd,
+       loc_cd,
+       loc_disp_name,
+       fin_yr,
+       fin_yr_desc,
+       dept_cd,
+       dept_disp_name,
+       miv_type,
+       miv_no,
+       miv_dt,
+       miv_doc_no,
+       miv_doc_dt,
+       miv_purpose,
+       miv_remarks,
+       supp_cd,
+       supp_name,
+       urgent_flag,
+       stage_desc,
+       created_by,
+       created_dt,
+       app_by,
+       app_by_name,
+       app_dt,
+       req_no,
+       req_dt,
+       req_doc_no,
+       req_doc_dt,
+       req_app_by,
+       req_app_by_name,
+       req_app_dt,
+       null REV_DOC_NO,
+       null REV_DOC_DT,
+       null REV_REASON,
+       ref_doc_indicator,
+       pgrn_doc_no  ref_doc_no,
+       pgrn_doc_dt  ref_doc_dt,
+       pgrn_no 		grn_no,
+       pgrn_dt 	    grn_dt,
+       po_no,
+       po_dt,
+       batch_no,
+       itemcode,
+       item_desc,
+      (select item_category
+       from  epps_mms.epps_mm_item_mst   
+       where comp_cd  = a.comp_cd
+       and   itemcode = a.itemcode) item_category,
+       uom_cd,
+       uom_desc,
+       uom_conv_factor,
+       alloc_qty_iss_uom,
+       alloc_qty,
+       alloc_rt,
+       alloc_val,
+       wh_disp_name,
+       cch_cd,
+       cch_disp_name,
+       ccg_cd,
+       ccg_disp_name,
+       item_level_remark,
+      (select distinct db_gl_cd 
+       from  epps_admin.epps_ecode_mst 
+       where comp_cd = a.comp_cd 
+       and   div_cd  = a.div_cd
+       and   ecode   = a.miv_type)  gl_cd,
+      (select epps.func_fa_get_gl_name(comp_cd,db_gl_cd)
+       from  epps_admin.epps_ecode_mst 
+       where comp_cd = a.comp_cd 
+       and   div_cd  = a.div_cd
+       and   ecode   = a.miv_type)  gl_name,
+       (select distinct db_sl_cd 
+       from  epps_admin.epps_ecode_mst 
+       where comp_cd = a.comp_cd 
+       and   div_cd  = a.div_cd
+       and   ecode   = a.miv_type)  sl_cd,
+      (select epps.func_fa_get_sl_name(comp_cd,div_cd,db_gl_cd,db_sl_cd)
+       from  epps_admin.epps_ecode_mst 
+       where comp_cd = a.comp_cd 
+       and   div_cd  = a.div_cd
+       and   ecode   = a.miv_type)  gl_name,
+       grp_cd,
+       grp_disp_name,
+       grs_cd,
+       grs_disp_name,
+       grss_cd,
+       grss_disp_name
+from   epps_iss_export2excel_tmp a;									   
+ 															   
+												   
+ 
+
+----Issue type---
+
+select ecode_disp_name,
+       ecode 
+from   epps_admin.epps_uni_ecode_mst euem 
+where  tran_indicator = 'ISS'
+and    active_yn      = 'Y'
+and    ecode in ('700','701','702')
+order by ecode asc
+ 															   
+------stage---
+select stage_desc,
+       stage_cd 
+from   epps_admin.epps_stage_mst esm 
+where comp_cd = 1
+and   ti_code = 'ISS'
+and   active_yn = 'Y'
+order by stage_cd asc;
+
+getIssueType
+getstagemiv
+getfinancialyear
+rpt_issue
+getlocation
+ 															   
+ 						
