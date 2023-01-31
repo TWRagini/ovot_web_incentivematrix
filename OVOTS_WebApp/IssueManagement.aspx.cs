@@ -16,8 +16,12 @@ using System.Web.UI.WebControls;
 
 namespace OVOTS_WebApp
 {
+
+
     public partial class IssueManagement : System.Web.UI.Page
     {
+        private static string StatusType; //D Update StatusType
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -26,6 +30,7 @@ namespace OVOTS_WebApp
         [WebMethod(EnableSession = true)]
         public static string GetIssueManagmentListCnt(string ddlFilterType, string FilterValue, string FromDt, string ToDt)
         {
+
             DataSet ds = new DataSet();
             CDal dal = new CDal();
             string cnt = "0";
@@ -52,7 +57,8 @@ namespace OVOTS_WebApp
                 strTo = dtTo.ToString("yyyy-MM-dd");
             }
             ds = dal.GetIssueManagmentList(ddlFilterType, FilterValue, strFrom, strTo, 0, 0, LoginUserCode, LoginUserLevel, LoginUserRole);
-           
+
+
             if (ds.Tables[1].Rows.Count > 0)
             {
                 cnt = Convert.ToString(ds.Tables[1].Rows[0][0]);
@@ -75,7 +81,7 @@ namespace OVOTS_WebApp
                 ord.P_PrevUser = Convert.ToString(ds.Tables[0].Rows[0]["PrevUser"]);
                 ord.P_PreviousUserLevel = Convert.ToString(ds.Tables[0].Rows[0]["PreviousUserLevel"]);
                 ord.P_ForwardDetail = Convert.ToString(ds.Tables[0].Rows[0]["ForwardDetail"]);
-                
+
             }
 
 
@@ -90,8 +96,7 @@ namespace OVOTS_WebApp
             List<ListItem> Prodd = new List<ListItem>();
             DataSet ds = new DataSet();
             CDal dal = new CDal();
-           
-           
+
             string CurrentUserLevel = Convert.ToString(HttpContext.Current.Session["UserLevel"]);
             string EscLevel = "2";
             string LoginUserRole = HttpContext.Current.Session["UserRole"].ToString();
@@ -99,8 +104,8 @@ namespace OVOTS_WebApp
             {
                 EscLevel = "3";
             }
-           int UserLevel = Convert.ToInt32(CurrentUserLevel) + 1;
-            ds = dal.GetMatrixLevel(IssueTypeCode, EscLevel);
+            int UserLevel = Convert.ToInt32(CurrentUserLevel) + 1;
+            ds = dal.GetMatrixLevelDropDown(IssueTypeCode, EscLevel);
             if (ds.Tables[0].Rows.Count > 0)
                 for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
                 {
@@ -132,21 +137,49 @@ namespace OVOTS_WebApp
             CDal dal = new CDal();
             List<IssueManagementBll> retuT = new List<IssueManagementBll>();
             ds = dal.GetIssueManagmentList(ddlFilterType, FilterValue, strFrom, strTo, startindex, EndIndex, LoginUserCode, LoginUserLevel, LoginUserRole);
-           
+
+
+
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
                 IssueManagementBll del = new IssueManagementBll();
+
+                string CurrentUserLevel = Convert.ToString(dr["CurrentUserLevel"]);
+
+
+                DataSet dsPendingWith = new DataSet();
+                dsPendingWith = dal.GetPendingWithUsers(Convert.ToString(dr["IssueType"]));
+                string Data = "";
+                for (int i = 0; i <= dsPendingWith.Tables[0].Rows.Count - 1; i++)
+                {
+
+                    Data = Convert.ToString(dsPendingWith.Tables[0].Rows[i]["UserName"]);
+
+                }
+
                 del.P_IssueCode = Convert.ToString(dr["IssueCode"]);
                 del.P_Dealer = Convert.ToString(dr["FirmName"]);
                 del.P_IssueType = Convert.ToString(dr["IssueType"]);
+                StatusType = del.P_IssueType;
                 del.P_IssueTypeCode = Convert.ToString(dr["IssueTypeCode"]);
                 del.P_IssueLevel = "";
                 del.P_IssueDescription = Convert.ToString(dr["IssueDescription"]);
                 del.P_IssueDate = Convert.ToString(dr["IssueDate"]);
                 del.P_IssueStatus = Convert.ToString(dr["IssueStatus"]);
                 del.P_CurrentUserLevel = Convert.ToString(dr["CurrentUserLevel"]);
+                CurrentUserLevel = del.P_CurrentUserLevel;
+
                 del.P_CurrentUserLevelText = Convert.ToString(dr["CurrentUserLevelText"]);
-                del.P_CurrentUser = Convert.ToString(dr["CurrentUser"]);
+                if (CurrentUserLevel == Convert.ToString(1))
+                {
+                    del.P_CurrentUser = Data;
+                }
+                else
+                {
+                    del.P_CurrentUser = Convert.ToString(dr["CurrentUser"]);
+                }
+
+                //del.P_CurrentUser = Convert.ToString(dr["CurrentUser"]);
                 del.P_ResolveBy = Convert.ToString(dr["ResolveBy"]);
                 del.P_ResolveDate = Convert.ToString(dr["ResolveDate"]);
                 del.P_PendingSince = Convert.ToString(dr["PendingSince"]);
@@ -188,20 +221,20 @@ namespace OVOTS_WebApp
                 obll.P_UserCode = HttpContext.Current.Session["USERCODE"].ToString();
                 obll.P_UserIP = dal.GetIPAddress();
                 ds = dal.SaveIssueDetails(del);
-               
+
                 retu = "Issue Details Saved Sucessfully";
                 if (obll.P_ForwardTo != "" && obll.P_ForwardTo != null)
                 {
                     DataSet dsMat = new DataSet();
-                    dsMat = dal.GetMatrixLevel(del.P_IssueType, EscLevel);
+                    dsMat = dal.GetMatrixLevel(StatusType, EscLevel); // Replace del.P_IssueType by IssueType
                     if (dsMat.Tables[0].Rows.Count > 0)
                     {
                         string EmailId = Convert.ToString(dsMat.Tables[0].Rows[0]["email"]);
                         string UserName = Convert.ToString(dsMat.Tables[0].Rows[0]["UserName"]);
-                        string IssueType = Convert.ToString(ds.Tables[0].Rows[0]["IssueType"]);
+                        //string IssueType = Convert.ToString(ds.Tables[0].Rows[0]["IssueType"]);
 
                         string EntryBy = HttpContext.Current.Session["UserName"].ToString();
-                        SendMail(UserName, IssueType, EmailId, EntryBy);
+                        SendMail(UserName, StatusType, EmailId, EntryBy); // IssueType Replace by StatusType
                     }
                 }
 

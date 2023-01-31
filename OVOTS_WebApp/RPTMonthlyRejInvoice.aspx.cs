@@ -49,7 +49,7 @@ namespace OVOTS_WebApp
             }
           
 
-            DSGet = dal.GetReport("ApproveStatus", "Rejected", strFrom, strTo, "Detail", "Invoice");
+            DSGet = dal.GetReport("ApproveStatus", "Rejected", strFrom, strTo, "Detail", "Invoice", "", "");
             if (DSGet.Tables[0].Rows.Count > 0)
             {
                 grdReport.DataSource = DSGet.Tables[0];
@@ -95,7 +95,7 @@ namespace OVOTS_WebApp
                 strTo = dtTo.ToString("yyyy-MM-dd");
             }
 
-            dsExcel = dal.GetReport("ApproveStatus", "Rejected", strFrom, strTo, "Detail", "Invoice");
+            dsExcel = dal.GetReport("ApproveStatus", "Rejected", strFrom, strTo, "Detail", "Invoice", "", "");
 
             if (dsExcel.Tables.Count != 0)
             {

@@ -26,7 +26,20 @@ namespace OVOTS_WebApp
         public static List<ListItem> GetDealerDll()
         {
             List<ListItem> Prodd = new List<ListItem>();
-            
+
+            DataSet ds = new DataSet();
+            CDal dal = new CDal();
+            ds = dal.GetDealerDll();
+            if (ds.Tables[0].Rows.Count > 0)
+                for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+                {
+                    ListItem n = new ListItem();
+                    n.Value = Convert.ToString(ds.Tables[0].Rows[i]["DealerCode"]);
+                    n.Text = Convert.ToString(ds.Tables[0].Rows[i]["FirmName"]);
+                    Prodd.Add(n);
+                }
+
+
             return Prodd;
         }
 
@@ -75,9 +88,25 @@ namespace OVOTS_WebApp
         [WebMethod(EnableSession = true)]
         public static string GetISDCnt(string ddlFilterType, string FilterValue)
         {
-           
+            DataSet ds = new DataSet();
+            CDal dal = new CDal();
             string cnt = "0";
-            
+            HttpContext.Current.Session["ISDCnt"] = "0";
+            if (ddlFilterType == "")
+            {
+                ddlFilterType = null;
+            }
+            if (FilterValue == "")
+            {
+                FilterValue = null;
+            }
+            ds = dal.GetISDList(ddlFilterType, FilterValue, 0, 0);
+            if (ds.Tables[1].Rows.Count > 0)
+            {
+                cnt = Convert.ToString(ds.Tables[1].Rows[0][0]);
+            }
+
+            HttpContext.Current.Session["ISDCnt"] = cnt;
             return cnt;
         }
 
@@ -114,9 +143,43 @@ namespace OVOTS_WebApp
             return oDealerBll;
         }
         [WebMethod(EnableSession = true)]
-        public static string SaveISDDetails(List<ISDMasterBll> oDealerBll)
+        public static string SaveISDDetails(List<ISDMasterBll> oISDBll)
         {
             string retu = "";
+            DataSet ds = new DataSet();
+            CDal dal = new CDal();
+            ISDMasterBll obll = new ISDMasterBll();
+            foreach (ISDMasterBll oPBLL in oISDBll)
+            {
+                obll.P_ISDCode = oPBLL.P_ISDCode;
+                obll.P_Name = oPBLL.P_Name;
+                obll.P_MobileNo = oPBLL.P_MobileNo;
+                obll.P_DealerCode = oPBLL.P_DealerCode;
+                obll.P_State = oPBLL.P_State;
+                obll.P_District = oPBLL.P_District;
+                obll.P_Town = oPBLL.P_Town;
+                obll.P_AdharNo = oPBLL.P_AdharNo;
+                obll.P_PANNO = oPBLL.P_PANNO;
+                obll.P_BankName = oPBLL.P_BankName;
+                obll.P_IFSCCode = oPBLL.P_IFSCCode;
+                obll.P_BankACNo = oPBLL.P_BankACNo;
+                obll.P_UPINo = oPBLL.P_UPINo;
+
+                obll.P_UserCode = HttpContext.Current.Session["USERCODE"].ToString();
+                obll.P_Active = oPBLL.P_Active;
+                obll.P_UserIP = "";
+                ds = dal.CheckDuplicateISD(obll.P_ISDCode, obll.P_MobileNo);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    retu = "Same contact Number Already available!";
+                }
+                else
+                {
+                    ds = dal.SaveISDDetails(obll);
+                    retu = "ISD Details Saved Sucessfully";
+                }
+                
+            }
 
 
             return retu;
@@ -235,8 +298,6 @@ namespace OVOTS_WebApp
             return dt;
         }
 
-       
-
         protected void GenExcel_ServerClick(object sender, EventArgs e)
         {
             int cnt = Convert.ToInt32(HttpContext.Current.Session["ISDCnt"]);
@@ -275,6 +336,63 @@ namespace OVOTS_WebApp
                     }
                 }
             }
+        }
+
+
+        //-------------New Implementation---------------//
+        [WebMethod(EnableSession = true)]
+        public static List<ListItem> GetStateDll() // Updates 20 - jan - 2023 Danish
+        {
+
+            List<ListItem> Prodd = new List<ListItem>();
+            DataSet ds = new DataSet();
+            CDal dal = new CDal();
+            ds = dal.GetStateDll();
+            if (ds.Tables[0].Rows.Count > 0)
+                for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+                {
+                    ListItem n = new ListItem();
+                    n.Value = Convert.ToString(ds.Tables[0].Rows[i]["StateCode"]);
+                    n.Text = Convert.ToString(ds.Tables[0].Rows[i]["StateName"]);
+                    Prodd.Add(n);
+                }
+            return Prodd;
+        }
+
+        [WebMethod(EnableSession = true)]
+        public static List<ListItem> GetDistrictDll(string StateCode) // Updates 20 - jan - 2023 Danish
+        {
+            List<ListItem> Prodd = new List<ListItem>();
+            DataSet ds = new DataSet();
+            CDal dal = new CDal();
+            ds = dal.GetDistrictDll(StateCode);
+            if (ds.Tables[0].Rows.Count > 0)
+                for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+                {
+                    ListItem n = new ListItem();
+                    n.Value = Convert.ToString(ds.Tables[0].Rows[i]["DistrictCode"]);
+                    n.Text = Convert.ToString(ds.Tables[0].Rows[i]["DistrictName"]);
+                    Prodd.Add(n);
+                }
+            return Prodd;
+        }
+
+        [WebMethod(EnableSession = true)]
+        public static List<ListItem> GetTownDll(string DistrictCode)// Updates 20 - jan - 2023 Danish
+        {
+            List<ListItem> Prodd = new List<ListItem>();
+            DataSet ds = new DataSet();
+            CDal dal = new CDal();
+            ds = dal.GetTownDll(DistrictCode);
+            if (ds.Tables[0].Rows.Count > 0)
+                for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+                {
+                    ListItem n = new ListItem();
+                    n.Value = Convert.ToString(ds.Tables[0].Rows[i]["TownCode"]);
+                    n.Text = Convert.ToString(ds.Tables[0].Rows[i]["TownName"]);
+                    Prodd.Add(n);
+                }
+            return Prodd;
         }
     }
 }

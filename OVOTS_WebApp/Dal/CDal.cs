@@ -62,6 +62,16 @@ namespace OVOTS_WebApp.Dal
             return ds;
         }
 
+        // New Implimentation 
+        public DataSet GetMatrixLevelDropDown(string P_IssueType, string P_Level) // Updates 14-01-2023
+        {
+            MySqlCommand command = new MySqlCommand();
+            command.Parameters.AddWithValue("P_IssueType", P_IssueType);
+            command.Parameters.AddWithValue("P_Level", P_Level);
+            ds = FillDS(command, "usp_get_MatrixLevelUserDropdown");
+            return ds;
+        }
+
         public DataSet GetApproveDetails(string P_UploadCode)
         {
             MySqlCommand command = new MySqlCommand();
@@ -673,7 +683,7 @@ namespace OVOTS_WebApp.Dal
             return ds;
         }
 
-        public DataSet GetReport(string P_FilterType, string P_FilterValue, string P_DateFrom, string P_DateTo, string P_ReportType, string P_ReportName)
+        public DataSet GetReport(string P_FilterType, string P_FilterValue, string P_DateFrom, string P_DateTo, string P_ReportType, string P_ReportName, string P_UserRoll, string P_MobNo)
         {
             MySqlCommand command = new MySqlCommand();
             command.Parameters.AddWithValue("P_FilterType", P_FilterType);
@@ -682,6 +692,8 @@ namespace OVOTS_WebApp.Dal
             command.Parameters.AddWithValue("P_DateTo", P_DateTo);
             command.Parameters.AddWithValue("P_ReportType", P_ReportType);
             command.Parameters.AddWithValue("P_ReportName", P_ReportName);
+            command.Parameters.AddWithValue("P_UserRoll", P_UserRoll);
+            command.Parameters.AddWithValue("P_MobilNo", P_MobNo);
             ds = FillDS(command, "usp_rpt_Report");
             return ds;
         }
@@ -1137,6 +1149,15 @@ namespace OVOTS_WebApp.Dal
 
         }
 
+        //New Impementation 
+        public DataSet GetPendingWithUsers(string P_IssueTypeCode)
+        {
+            MySqlCommand command = new MySqlCommand();
+            command.Parameters.AddWithValue("P_IssueTypeCode", P_IssueTypeCode);
+            ds = FillDS(command, "usp_get_PendingUsers");
+            return ds;
+        }
+
         public DataSet GetMailMaster(string P_MailType)
         {
             MySqlCommand command = new MySqlCommand();
@@ -1335,6 +1356,28 @@ namespace OVOTS_WebApp.Dal
             }
             return visitorIPAddress;
         }
+
+        // Danish Bagwan 30-01-2023 //
+
+        public DataSet GetState(string DealerCode)
+        {
+            
+            MySqlCommand command = new MySqlCommand();
+
+            DataSet DSGet = new DataSet();
+
+            string CommandText = "SELECT State,District,Town FROM dealermaster  WHERE DealerCode = '" + DealerCode + "';";
+            command.CommandType = CommandType.Text;
+            command.CommandText = CommandText;
+            command.Connection = new MySqlConnection(getConnectionString());
+            command.Connection.Open();
+            da.SelectCommand = command;
+
+            da.Fill(DSGet);
+            command.Connection.Close();
+            return DSGet;
+        }
+
 
     }
 }

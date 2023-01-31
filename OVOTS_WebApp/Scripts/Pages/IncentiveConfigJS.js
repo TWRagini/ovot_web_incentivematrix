@@ -99,6 +99,111 @@
                 0, range(totalPages - sideWidth + 1, totalPages));
     }
 
+    //----------------------------24-01-2023-------------------------------//
+    function SetPages(numberOfItems, limitPerPage, paginationSize) {
+
+        var numberOfItems = numberOfItems;
+        var limitPerPage = limitPerPage;
+        var totalPages = Math.ceil(numberOfItems / limitPerPage);
+        var paginationSize = paginationSize;
+        var currentPage;
+
+        function showPage(whichPage) {
+            if (whichPage < 1 || whichPage > totalPages) return false;
+            currentPage = whichPage;
+            $(".pagination li").slice(1, -1).remove();
+            getPageList(totalPages, currentPage, paginationSize).forEach(item => {
+                $("<li>").addClass("page-item")
+                    .addClass(item ? "current-page" : "disabled")
+                    .toggleClass("active", item === currentPage).append(
+                        $("<a>").addClass("page-link").attr({
+                            href: "javascript:void(0)"
+                        }).text(item || "...")
+                    ).insertBefore("#next-page");
+            });
+            $("#previous-page").toggleClass("disabled", currentPage === 1);
+            $("#next-page").toggleClass("disabled", currentPage === totalPages);
+            return true;
+        }
+        $(".pagination").append(
+            $("<li>").addClass("page-item").attr({ id: "previous-page" }).append(
+                $("<a>").addClass("page-link").attr({
+                    href: "javascript:void(0)"
+                }).text("Prev")
+            ),
+            $("<li>").addClass("page-item").attr({ id: "next-page" }).append(
+                $("<a>").addClass("page-link").attr({
+                    href: "javascript:void(0)"
+                }).text("Next")
+            )
+        );
+        showPage(1);
+        $(document).on("click", ".pagination li.current-page:not(.active)", function () {
+            return showPage(+$(this).text());
+        });
+        $("#next-page").on("click", function () {
+            var End = parseInt(currentPage + 1) * parseInt(15);
+            var Start = (parseInt(End) - parseInt(15));
+            GetAllClients(Start, 15);
+            return showPage(currentPage + 1);
+        });
+
+        $("#previous-page").on("click", function () {
+            var End = parseInt(currentPage - 1) * parseInt(15);
+            var Start = (parseInt(End) - parseInt(15));
+            GetAllClients(Start, 15);
+            return showPage(currentPage - 1);
+        });
+        $(".pagination").append("</ul>");
+    };
+
+    //function GetAllClients(StartIndex, EndIndex) {
+    //    debugger;
+    //    $("#GCHMasterTbl").find("tr:gt(0)").remove();
+    //    $body.addClass("loading");
+    //    var FilterType = $("#ddlFilterType").val().trim();
+    //    var FilterValue = $("#FilterValue").val().trim();
+    //    $("#ContentPlaceHolder1_hdFilterValue").val(FilterValue);
+    //    $("#ContentPlaceHolder1_hdFilterType").val(FilterType);
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "GCHMaster.aspx/GetGCHList",
+    //        data: JSON.stringify({ 'ddlFilterType': FilterType, 'FilterValue': FilterValue, 'startindex': StartIndex, 'EndIndex': EndIndex }),
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+
+    //        success: function (data) {
+    //            console.log(data);
+    //            var PT = data.d;
+    //            if (PT.length > 0) {
+
+    //                $("#nav").show();
+    //                for (var i = 0; i < PT.length; i++) {
+    //                    $("#GCHMasterTbl").append("<tr><td>"
+    //                        + ('<a class="clkEdit pointerOnAnchor" id="clkEdit" style=""><span style="color:green">Edit</span></a> | <a class="clkView pointerOnAnchor" id="clkView" style=""><span style="color:orange">View</span></a>') + "</td><td>"
+    //                        + PT[i].P_GCHCode + "</td><td>"
+    //                        + PT[i].P_GCHName + "</td><td>"
+    //                        + PT[i].P_MobileNo + "</td><td>"
+    //                        + PT[i].P_EmailId + "</td><td>"
+    //                        + PT[i].P_State + "</td><td>"
+    //                        + PT[i].P_District + "</td><td>"
+    //                        + PT[i].P_Town + "</td><td>"
+    //                        + PT[i].P_PinCode + "</td><td>"
+    //                        + PT[i].P_Address + "</td><td>"
+    //                        + PT[i].P_ClusterName + "</td></tr>");
+    //                }
+
+    //            } else {
+    //                $("#nav").hide();
+    //                $("#GCHMasterTbl").append("<tr style='color:red;'><td colspan='7' style='text-align:center'>No Record Found</td></tr>");
+    //            }
+    //            $body.removeClass("loading");
+    //        }
+    //    });
+    //}
+
+    //----------------------------------- END -------------------------------------//
+
    
 
     $('#ModelContent input:text').blur(function () {

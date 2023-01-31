@@ -32,9 +32,31 @@
         return TotalClientCnt;
     };
 
+
     $.ajax({
         type: "POST",
-        url: "GCHMaster.aspx/GetStateDll",
+        url: "ISDMaster.aspx/GetDealerDll",
+        data: '{}',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (r) {
+            console.log(r);
+            var ReasonDD = $("[id*=DealerCode]");
+            $.each(r.d, function () {
+                ReasonDD.append($("<option></option>").val(this['Value']).html(this['Text']));
+            });
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+            alert("Error while retrieving data of :" + textStatus); alert("Error: " + XMLHttpRequest.responseText);
+        }
+
+    });
+
+
+    $.ajax({
+        type: "POST",
+        url: "ISDMaster.aspx/GetStateDll",
         data: '{}',
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -58,7 +80,7 @@
         debugger;
         $.ajax({
             type: "POST",
-            url: "GCHMaster.aspx/GetDistrictDll",
+            url: "ISDMaster.aspx/GetDistrictDll",
             data: JSON.stringify({ 'StateCode': StateCode }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -83,7 +105,7 @@
         debugger;
         $.ajax({
             type: "POST",
-            url: "GCHMaster.aspx/GetTownDll",
+            url: "ISDMaster.aspx/GetTownDll",
             data: JSON.stringify({ 'DistrictCode': DistrictCode }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -103,26 +125,7 @@
 
     });
     
-    $.ajax({
-        type: "POST",
-        url: "ISDMaster.aspx/GetDealerDll",
-        data: '{}',
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (r) {
-            console.log(r);
-            var ReasonDD = $("[id*=DealerCode]");
-            $.each(r.d, function () {
-                ReasonDD.append($("<option></option>").val(this['Value']).html(this['Text']));
-            });
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-
-            alert("Error while retrieving data of :" + textStatus); alert("Error: " + XMLHttpRequest.responseText);
-        }
-
-    });
-
+  
     $('body').on('click', '#nav li', function () {
         $("#DistributerMasterTbl").find("tr:gt(0)").remove();
         var val = $(this).find('a').text();
@@ -312,9 +315,9 @@
                 $("#MobileNo").val(ns.P_MobileNo);
                 $("#StateCode").val(ns.P_State);
                 $("#StateCode").change();
-                $("#DistrictCode option[value=" + ns.P_District + "]").attr('selected', 'selected');
+                $("#DistrictCode").val(ns.P_District);
                 $("#DistrictCode").change();
-                $("#TownCode option[value=" + ns.P_Town + "]").attr('selected', 'selected');
+                $("#TownCode").val(ns.P_Town);
                 $("#AdharNo").val(ns.P_AdharNo);
                 $("#PANNO").val(ns.P_PANNO);
                 $("#BankName").val(ns.P_BankName);
@@ -357,9 +360,9 @@
                 $("#MobileNo").val(ns.P_MobileNo);
                 $("#StateCode").val(ns.P_State);
                 $("#StateCode").change();
-                $("#DistrictCode option[value=" + ns.P_District + "]").attr('selected', 'selected');
+                $("#DistrictCode").val(ns.P_District);
                 $("#DistrictCode").change();
-                $("#TownCode option[value=" + ns.P_Town + "]").attr('selected', 'selected');
+                $("#TownCode").val(ns.P_Town);
                 $("#AdharNo").val(ns.P_AdharNo);
                 $("#PANNO").val(ns.P_PANNO);
                 $("#BankName").val(ns.P_BankName);
@@ -430,29 +433,7 @@
         if ( Name == "" || MobileNo == "" ) {
             Validate = false;
         }
-        //if ($("#HDCLIENT_CODE").val() == 0 && ClientName != OldValue) {
-        //    $.ajax({
-        //        type: "POST",
-        //        url: "/Masters/CheckDuplicate",
-        //        data: JSON.stringify({ 'TblName': 'DistributerMasterTbl', 'ColumnName': 'CLIENT_NAME', 'Value': ClientName }),
-        //        contentType: "application/json; charset=utf-8",
-        //        dataType: "json",
-        //        async: false,
-        //        headers: headers,
-        //        success: function (data) {
-        //            console.log(data);
-        //            if (data != "0") {
-        //                Validate = false;
-        //                $.alert("" + ClientName + " Client Already Exist!");
-        //            }
-        //        },
-        //        complete: function () {
-        //            $body.removeClass("loading");
-        //        }
-        //    });
-        //}
-
-
+        
         if (Validate) {
             $body.addClass("loading");
             var ACTIVE = 'FALSE';
@@ -479,7 +460,7 @@
             $.ajax({
                 type: "POST",
                 url: "ISDMaster.aspx/SaveISDDetails",
-                data: JSON.stringify({ 'oDealerBll': ISDMaster }),
+                data: JSON.stringify({ 'oISDBll': ISDMaster }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
 

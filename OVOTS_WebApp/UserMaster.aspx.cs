@@ -176,6 +176,8 @@ namespace OVOTS_WebApp
                 obll.P_UserRole = oPBLL.P_UserRole.Trim();
                 obll.P_IMEI = "";
                 obll.P_Remarks = oPBLL.P_Remarks;
+
+                
                 string ValidateDuplicate = ValidateUser(oPBLL.P_ContactNumber, "Duplicate", oPBLL.P_UserCode);
                 if(ValidateDuplicate == "Duplicate")
                 {
@@ -248,14 +250,25 @@ namespace OVOTS_WebApp
                     {
                         if (oPBLL.P_UserPrevRole == "ROL00003" && oPBLL.P_UserRole == "ROL00004")
                         {
+                            ds = dal.GetState(oPBLL.P_UserId);
+                            string getstatecode = "";
+                            string getDistrictcode = "";
+                            string getTowncode = "";
+                            if (ds.Tables[0].Rows.Count != 0)
+                            {
+                                getstatecode = Convert.ToString(ds.Tables[0].Rows[0]["State"]);
+                                getDistrictcode = Convert.ToString(ds.Tables[0].Rows[0]["District"]);
+                                getTowncode = Convert.ToString(ds.Tables[0].Rows[0]["Town"]);
+                            }
+
                             ISDMasterBll isdbll = new ISDMasterBll();
                             isdbll.P_ISDCode = "0";
                             isdbll.P_DealerCode = oPBLL.P_UserId;
                             isdbll.P_Name = oPBLL.P_UserName;
                             isdbll.P_MobileNo = oPBLL.P_ContactNumber;
-                            isdbll.P_State = "";
-                            isdbll.P_District = "";
-                            isdbll.P_Town = "";
+                            isdbll.P_State = getstatecode;
+                            isdbll.P_District = getDistrictcode;
+                            isdbll.P_Town = getTowncode;
                             isdbll.P_AdharNo = "";
                             isdbll.P_PANNO = "";
                             isdbll.P_BankName = "";

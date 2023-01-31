@@ -137,7 +137,7 @@
         <br />
         <br />
 
-        <div class="form-group; col-sm-12" style="border: 1px solid black; padding: 20px; background-color: #D8D8D8;overflow:auto">
+        <div class="form-group; col-sm-12" style="border: 1px solid black; padding: 10px; background-color: #D8D8D8;overflow:auto">
  <asp:GridView ID="grdReport" runat="server" CssClass="Grid" AutoGenerateColumns="true" Width="450%" OnPageIndexChanging="grdReport_PageIndexChanging"
                                 EmptyDataText="No records has been added." HeaderStyle-Height="30px" CellPadding="3" ForeColor="Black" BorderColor="#999999" BackColor="White" BorderStyle="Solid" BorderWidth="1px"   AllowPaging ="true" PageSize="20">
                                        

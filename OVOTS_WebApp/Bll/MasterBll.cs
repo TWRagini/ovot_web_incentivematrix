@@ -103,6 +103,11 @@ namespace OVOTS_WebApp.Bll
 
         public string P_TransactionId { get; set; }
 
+        //New Implementation For State Distr Town
+        public string P_State { get; set; }
+        public string P_District { get; set; }
+        public string P_Town { get; set; }
+
     }
 
     public class IssueManagementBll
