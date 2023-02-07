@@ -9,6 +9,7 @@ using MySql.Data.MySqlClient;
 using System.Web.UI.WebControls;
 using System.Configuration;
 using OVOTS_WebApp.Bll;
+using Microsoft.ApplicationBlocks.Data;
 //using OVOTS_WebApp.Bll;
 
 namespace OVOTS_WebApp.Dal
@@ -940,7 +941,7 @@ namespace OVOTS_WebApp.Dal
             return ds;
         }
 
-        public DataSet DeleteIncentiveConfigDetails(string P_ConfigCode, string P_ModelCode)
+        public DataSet DeleteIncentiveConfigDetails(string P_ModelCode , string P_ConfigCode)
         {
             MySqlCommand command = new MySqlCommand();
             command.Parameters.AddWithValue("P_ConfigCode", P_ConfigCode);
@@ -1376,6 +1377,14 @@ namespace OVOTS_WebApp.Dal
             da.Fill(DSGet);
             command.Connection.Close();
             return DSGet;
+        }
+
+        public DataSet GetConfigCode()
+        {
+            MySqlCommand command = new MySqlCommand();
+            command.Parameters.AddWithValue("P_TableName", "incentiveconfigmaster");
+            ds = FillDS(command, "usp_get_IncentiveConfigCode");
+            return ds;
         }
 
 

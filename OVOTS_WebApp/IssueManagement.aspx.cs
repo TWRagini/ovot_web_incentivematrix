@@ -104,6 +104,8 @@ namespace OVOTS_WebApp
             {
                 EscLevel = "3";
             }
+            if (CurrentUserLevel == "")
+                CurrentUserLevel = "0";
             int UserLevel = Convert.ToInt32(CurrentUserLevel) + 1;
             ds = dal.GetMatrixLevelDropDown(IssueTypeCode, EscLevel);
             if (ds.Tables[0].Rows.Count > 0)
@@ -223,10 +225,11 @@ namespace OVOTS_WebApp
                 ds = dal.SaveIssueDetails(del);
 
                 retu = "Issue Details Saved Sucessfully";
-                if (obll.P_ForwardTo != "" && obll.P_ForwardTo != null)
+                if (obll.P_ForwardTo != "" && obll.P_ForwardTo != null && del.P_ActionType != "Resolve")
                 {
                     DataSet dsMat = new DataSet();
-                    dsMat = dal.GetMatrixLevel(StatusType, EscLevel); // Replace del.P_IssueType by IssueType
+                    //dsMat = dal.GetMatrixLevel(StatusType, EscLevel);// Replace del.P_IssueType by IssueType
+                    dsMat = dal.GetMatrixLevel(obll.P_ForwardTo, EscLevel); 
                     if (dsMat.Tables[0].Rows.Count > 0)
                     {
                         string EmailId = Convert.ToString(dsMat.Tables[0].Rows[0]["email"]);
@@ -236,6 +239,8 @@ namespace OVOTS_WebApp
                         string EntryBy = HttpContext.Current.Session["UserName"].ToString();
                         SendMail(UserName, StatusType, EmailId, EntryBy); // IssueType Replace by StatusType
                     }
+
+                    
                 }
 
 

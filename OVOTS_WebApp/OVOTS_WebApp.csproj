@@ -53,6 +53,9 @@
     <Reference Include="itextsharp">
       <HintPath>..\..\Ovots WebApp\OVOTS_WebApp\bin\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ApplicationBlocks.Data">
+      <HintPath>..\..\..\..\..\VS 2010\ATUL_GRAINITES_SHEVGAON\CADPPM\bin\Debug\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Ovots WebApp\OVOTS_WebApp\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
